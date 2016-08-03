@@ -104,6 +104,21 @@ function neighbors(x, y) {
     return n
 }
 
+function konchilos() {
+    for (var x = 0; x < gw; x++) {
+        for (var y = 0; y < gh; y++) {
+            if (grid[x][y] !== 0) {
+                var s = [x, y]
+                var g = bfs(s, [s])
+                if(g.length >= min_length) {
+                    return true
+                }
+            }
+        }
+    }
+    return false
+}
+
 function bfs(from, visited) {
     var a = neighbors(from[0], from[1]).forEach(function (nn) {
         if (grid[nn[0]][nn[1]] == grid[from[0]][from[1]] && !visited.contains(nn)) {
@@ -131,8 +146,16 @@ window.onload = function () {
             // var group = bfs([0, 0], [[0, 0]]);
             if (group.length >= min_length) {
                 group.forEach(function (sqn) {
-                    context.fillStyle = colors[grid[sqn[0]][sqn[1]]];
+                    context.fillStyle = "#fff";
                     context.fillRect(sqn[0] * size - size * 0.25, sqn[1] * size - size * 0.25, size * 1.5, size * 1.5);
+                })
+                // group.forEach(function (sqn) {
+                //     context.fillStyle = "#ffffff";
+                //     context.fillRect(sqn[0] * size - size * 0.20, sqn[1] * size - size * 0.20, size * 1.5, size * 1.5);
+                // })
+                group.forEach(function (sqn) {
+                    context.fillStyle = colors[grid[sqn[0]][sqn[1]]];
+                    context.fillRect(sqn[0] * size - size * 0.25 + 1, sqn[1] * size - size * 0.25 + 1, size * 1.5 - 2, size * 1.5 - 2);
                 })
             }
         }
@@ -174,6 +197,9 @@ window.onload = function () {
             }
         }
         drawBoard(canvas, context);
+        if(!konchilos()) {
+            alert("the end")
+        }
         // console.log(group);
     }, false);
     drawBoard(canvas, context);
