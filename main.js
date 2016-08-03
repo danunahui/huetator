@@ -48,6 +48,7 @@ var ch = bh + (p * 2) + 1;
 var colors = ["#ffffff", "#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628"];
 
 var grid = new Array(30);
+var score = 0;
 
 for (var x = 0; x < 30; x++) {
     grid[x] = new Array(30);
@@ -79,8 +80,8 @@ function drawBoard(canvas, context) {
 
     // console.log(getMousePos(canvas))
 
-    context.strokeStyle = "black";
-    context.stroke();
+    // context.strokeStyle = "black";
+    // context.stroke();
 }
 
 function getMousePos(canvas, evt) {
@@ -95,8 +96,8 @@ function neighbors(x, y) {
     var n = [];
     if (x > 0) n.push([x - 1, y]);
     if (y > 0) n.push([x, y - 1]);
-    if (x < 30) n.push([x + 1, y]);
-    if (y < 30) n.push([x, y + 1]);
+    if (x < 29) n.push([x + 1, y]);
+    if (y < 29) n.push([x, y + 1]);
     return n
 }
 
@@ -113,6 +114,7 @@ function bfs(from, visited) {
 
 window.onload = function () {
     var canvas = document.getElementById('canvas');
+    var score_s = document.getElementById('score');
     var context = canvas.getContext("2d");
     canvas.addEventListener('mousemove', function (evt) {
         drawBoard(canvas, context);
@@ -138,20 +140,29 @@ window.onload = function () {
         // var group = bfs([0, 0], [[0, 0]]);
 
         if (group.length > 1) {
+            // group.forEach(function (sqn) {
+            //     grid[sqn[0]][sqn[1]] = 0;
+            //     context.fillStyle = colors[grid[sqn[0]][sqn[1]]];
+            //     context.fillRect(sqn[0] * 20 - 5, sqn[1] * 20 - 5, 30, 30);
+            // });
+            group.sort(function(a, b){
+                return a[1]-b[1]
+            })
+
             group.forEach(function (sqn) {
-                grid[sqn[0]][sqn[1]] = 0;
-                // context.fillStyle = colors[grid[sqn[0]][sqn[1]]];
-                // context.fillRect(sqn[0] * 20 - 5, sqn[1] * 20 - 5, 30, 30);
-            });
-            group.forEach(function (sqn) {
-                grid[sqn[0]][sqn[1]] = 0;
-                for(var y = sqn[1]; y > 0; y--) {
+                console.log(sqn)
+                // grid[sqn[0]][sqn[1]] = 0;
+                for(var y = sqn[1]; y >= 0; y--) {
                     grid[sqn[0]][y] = grid[sqn[0]][y - 1]
                 }
                 grid[sqn[0]][0] = 0;
                 // context.fillStyle = colors[grid[sqn[0]][sqn[1]]];
                 // context.fillRect(sqn[0] * 20 - 5, sqn[1] * 20 - 5, 30, 30);
             })
+
+            score += Math.pow(2, group.length)
+            score_s.innerHTML = score
+
         }
         drawBoard(canvas, context);
         // console.log(group);
