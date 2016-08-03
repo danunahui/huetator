@@ -147,10 +147,10 @@ window.onload = function () {
             // });
             group.sort(function(a, b){
                 return a[1]-b[1]
-            })
+            });
 
             group.forEach(function (sqn) {
-                console.log(sqn)
+                console.log(sqn);
                 // grid[sqn[0]][sqn[1]] = 0;
                 for(var y = sqn[1]; y >= 0; y--) {
                     grid[sqn[0]][y] = grid[sqn[0]][y - 1]
@@ -158,9 +158,9 @@ window.onload = function () {
                 grid[sqn[0]][0] = 0;
                 // context.fillStyle = colors[grid[sqn[0]][sqn[1]]];
                 // context.fillRect(sqn[0] * 20 - 5, sqn[1] * 20 - 5, 30, 30);
-            })
+            });
 
-            score += Math.pow(2, group.length)
+            score += Math.pow(2, group.length);
             score_s.innerHTML = score
 
         }
