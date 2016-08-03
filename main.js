@@ -37,28 +37,30 @@ Array.prototype.contains = function (elem) {
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
 
 //grid width and height
-var bw = 600;
-var bh = 600;
+var gw = 30;
+var gh = 30;
 //padding around grid
-var p = 0;
+var size = 20;
 //size of canvas
-var cw = bw + (p * 2) + 1;
-var ch = bh + (p * 2) + 1;
+var cw = gw * size;
+var ch = gh * size;
+
+var min_length = 2;
 
 var colors = ["#ffffff", "#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628"];
 
-var grid = new Array(30);
+var grid = new Array(gw);
 var score = 0;
 
-for (var x = 0; x < 30; x++) {
-    grid[x] = new Array(30);
-    for (var y = 0; y < 30; y++) {
+for (var x = 0; x < gw; x++) {
+    grid[x] = new Array(gh);
+    for (var y = 0; y < gh; y++) {
         grid[x][y] = Math.floor(Math.random() * (colors.length - 1)) + 1;
     }
 }
 
 function drawBoard(canvas, context) {
-    context.clearRect(0, 0, 600, 600);
+    context.clearRect(0, 0, cw, ch);
 
     // for (var x = 0; x <= bw; x += 40) {
     //     context.moveTo(0.5 + x + p, p);
@@ -71,10 +73,10 @@ function drawBoard(canvas, context) {
     //     context.lineTo(bw + p, 0.5 + x + p);
     // }
 
-    for (var x = 0; x < 30; x++) {
-        for (var y = 0; y < 30; y++) {
+    for (var x = 0; x < gw; x++) {
+        for (var y = 0; y < gh; y++) {
             context.fillStyle = colors[grid[x][y]];
-            context.fillRect(x * 20, y * 20, 19, 19);
+            context.fillRect(x * size, y * size, size - 1, size - 1);
         }
     }
 
@@ -96,8 +98,8 @@ function neighbors(x, y) {
     var n = [];
     if (x > 0) n.push([x - 1, y]);
     if (y > 0) n.push([x, y - 1]);
-    if (x < 29) n.push([x + 1, y]);
-    if (y < 29) n.push([x, y + 1]);
+    if (x < gw - 1) n.push([x + 1, y]);
+    if (y < gh - 1) n.push([x, y + 1]);
     return n
 }
 
@@ -107,52 +109,56 @@ function bfs(from, visited) {
             visited.push(nn);
             bfs(nn, visited)
         }
-        return visited
+        // return visited
     });
     return visited
 }
 
 window.onload = function () {
     var canvas = document.getElementById('canvas');
+    canvas.setAttribute("width", cw);
+    canvas.setAttribute("height", ch);
     var score_s = document.getElementById('score');
     var context = canvas.getContext("2d");
     canvas.addEventListener('mousemove', function (evt) {
         drawBoard(canvas, context);
         var mousePos = getMousePos(canvas, evt);
         var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
-        var sq = [Math.floor(mousePos.x / 20), Math.floor(mousePos.y / 20)];
+        var sq = [Math.floor(mousePos.x / size), Math.floor(mousePos.y / size)];
         if (grid[sq[0]][sq[1]] !== 0) {
             var group = bfs(sq, [sq]);
             // var group = bfs([0, 0], [[0, 0]]);
-            group.forEach(function (sqn) {
-                context.fillStyle = colors[grid[sqn[0]][sqn[1]]];
-                context.fillRect(sqn[0] * 20 - 5, sqn[1] * 20 - 5, 30, 30);
-            })
+            if (group.length >= min_length) {
+                group.forEach(function (sqn) {
+                    context.fillStyle = colors[grid[sqn[0]][sqn[1]]];
+                    context.fillRect(sqn[0] * size - size * 0.25, sqn[1] * size - size * 0.25, size * 1.5, size * 1.5);
+                })
+            }
         }
         // console.log(group);
     }, false);
     canvas.addEventListener('click', function (evt) {
         var mousePos = getMousePos(canvas, evt);
         var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
-        var sq = [Math.floor(mousePos.x / 20), Math.floor(mousePos.y / 20)];
+        var sq = [Math.floor(mousePos.x / size), Math.floor(mousePos.y / size)];
 
         var group = bfs(sq, [sq]);
         // var group = bfs([0, 0], [[0, 0]]);
 
-        if (group.length > 1) {
+        if (group.length >= min_length) {
             // group.forEach(function (sqn) {
             //     grid[sqn[0]][sqn[1]] = 0;
             //     context.fillStyle = colors[grid[sqn[0]][sqn[1]]];
             //     context.fillRect(sqn[0] * 20 - 5, sqn[1] * 20 - 5, 30, 30);
             // });
-            group.sort(function(a, b){
-                return a[1]-b[1]
+            group.sort(function (a, b) {
+                return a[1] - b[1]
             });
 
             group.forEach(function (sqn) {
-                console.log(sqn);
+                // console.log(sqn);
                 // grid[sqn[0]][sqn[1]] = 0;
-                for(var y = sqn[1]; y >= 0; y--) {
+                for (var y = sqn[1]; y >= 0; y--) {
                     grid[sqn[0]][y] = grid[sqn[0]][y - 1]
                 }
                 grid[sqn[0]][0] = 0;
