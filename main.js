@@ -48,6 +48,7 @@ var ch = gh * size;
 var min_length = 2;
 
 var colors = ["#ffffff", "#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628"];
+var colors_total = 6;
 
 var grid = new Array(gw);
 var score = 0;
@@ -55,7 +56,7 @@ var score = 0;
 for (var x = 0; x < gw; x++) {
     grid[x] = new Array(gh);
     for (var y = 0; y < gh; y++) {
-        grid[x][y] = Math.floor(Math.random() * (colors.length - 1)) + 1;
+        grid[x][y] = Math.floor(Math.random() * (colors_total - 1)) + 1;
     }
 }
 
