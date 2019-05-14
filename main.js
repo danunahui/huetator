@@ -45,7 +45,7 @@ var size = 20;
 var cw = gw * size;
 var ch = gh * size;
 
-var min_length = 2;
+var min_length = 3;
 
 var colors = ["#ffffff", "#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628"];
 var colors_total = 6;
@@ -191,7 +191,7 @@ window.onload = function () {
                     // context.fillRect(sqn[0] * 20 - 5, sqn[1] * 20 - 5, 30, 30);
                 });
 
-                score += Math.pow(2, group.length);
+                score += Math.round(Math.log(group.length) * group.length);
                 score_s.innerHTML = score
 
             }
